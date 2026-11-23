@@ -27,7 +27,7 @@ npm run preview    # serve the production build locally
 1. `npm install` completes without peer-dependency errors (React 19 is used throughout).
 2. `npm run dev` opens with no red error overlay and no console errors.
 3. Home loads, the bottom tab bar floats, and the menu button (top right) opens the full-screen menu.
-4. Open a product, choose customisation options, add it to the cart. The cart badge updates and survives a reload.
+4. Open a product, optionally type a note for customisation, add it to the cart. The cart badge updates and survives a reload.
 5. Cart: change quantities, fill in the checkout details, then try **Place Order via WhatsApp** (on a phone over https: the share sheet opens with the order picture and message; elsewhere: the picture is saved and WhatsApp opens with the message).
 6. Turn on "Reduce motion" in your OS settings and reload: motion should calm down (see Accessibility).
 7. `npm run build` succeeds.
@@ -51,7 +51,7 @@ If something fails, send me the exact error text and file name.
 plus optional `keywords[]` for search. `category` must match an id in `categories`; `collection` must match a collection `slug`.
 `featured: true` puts a product in Best Sellers. `trending` is available for your own use.
 
-Customisation options are `{ id, label, type: "select" | "text", required, choices?, placeholder?, maxLength? }`.
+(Legacy: the shop now shows a single free-text "Note for customisation" box on every product and ignores these options.) Customisation options are `{ id, label, type: "select" | "text", required, choices?, placeholder?, maxLength? }`.
 
 ## Assets you still need to supply
 

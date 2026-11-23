@@ -13,7 +13,7 @@ export const siteConfig = {
   whatsappUrl: WHATSAPP_URL,
   // Opens a WhatsApp chat with the studio and the message already typed in
   whatsappLink: (text = "") => `${WHATSAPP_URL}${text ? `?text=${encodeURIComponent(text)}` : ""}`,
-  email: "hello@example.com", // TODO: replace
+  email: "floral.and.co.india@gmail.com",
   phone: "", // optional; leave empty to hide
 
   currency: { code: "INR", symbol: "₹", locale: "en-IN" },
@@ -39,7 +39,6 @@ export const siteConfig = {
   // Full-screen menu overlay
   menuLinks: [
     { label: "Track My Order", to: "/my-order" },
-    { label: "About Us", to: "/about" },
     { label: "How It Works", to: "/#how-it-works" },
     { label: "Contact Us", to: "/#contact" }, // footer lives on the home page
     { label: "WhatsApp", href: WHATSAPP_URL, external: true },

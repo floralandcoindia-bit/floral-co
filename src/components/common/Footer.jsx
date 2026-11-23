@@ -38,7 +38,6 @@ export default function Footer() {
                 <Link to={l.to} className={linkClass}>{l.label}</Link>
               </li>
             ))}
-            <li><Link to="/about" className={linkClass}>About</Link></li>
           </ul>
         </motion.nav>
 

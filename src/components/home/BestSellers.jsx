@@ -142,7 +142,7 @@ export default function BestSellers() {
             <div
               key={`${copy}-${i}-${p.id}`}
               aria-hidden={copy !== 1 ? "true" : undefined}
-              inert={copy !== 1 ? "" : undefined}
+              inert={copy !== 1}
               className="w-[74vw] shrink-0 pr-5 sm:w-[340px] sm:pr-8 lg:w-[400px]"
             >
               <ProductCard product={p} ratio="4/5" eager={copy === 1 && i < 4} />

@@ -53,12 +53,12 @@ Do these in order. Each part takes a few minutes. You never need to send me any 
 3. On the shop, add something to the cart, fill the form, tap **Place Order via WhatsApp**. WhatsApp should open with the order number, a picture link and a tracking link.
 4. **Admin → Orders → Waiting approval.** The order is there with a 24-hour countdown and the picture. Press **Approve**.
 5. Open `/my-order`, enter the order number and the last 4 digits of the phone. The timeline shows *Approved*. Change the status in admin and refresh.
-6. Place a second order and **Delete** it in admin. Its picture disappears from ImageKit (Media Library), and My Order says "Order not found".
+6. Place a second order and **Delete** it in admin. Its picture disappears from ImageKit (Media Library), and Track My Order says "Order not found".
 
 ## How the main rules work
 
 - **Prices** are always read from the database when an order is created. A customer can't change a price.
-- **24-hour rule.** Every order gets a deadline 24 hours after it's placed. Approving it removes the deadline. An hourly database job turns unapproved, overdue orders into *dismissed* and erases the name, phone, address, notes and items. Only the order number, status, dates and the last 4 phone digits stay (so My Order can still say "dismissed").
+- **24-hour rule.** Every order gets a deadline 24 hours after it's placed. Approving it removes the deadline. An hourly database job turns unapproved, overdue orders into *dismissed* and erases the name, phone, address, notes and items. Only the order number, status, dates and the last 4 phone digits stay (so Track My Order can still say "dismissed").
 - **Rejecting** an order moves it to *Dismissed* straight away but keeps the customer's details for 24 more hours, so you can message them first.
 - **Order pictures on ImageKit** are deleted by `/api/cron-cleanup`. On Vercel's free plan cron runs **once a day** (03:00 UTC), so a picture can linger up to about a day after its order is erased. To make it hourly, run `supabase/03_optional_hourly_image_cleanup.sql` after filling in your site address and `CRON_SECRET`.
 - **Keep-alive.** That same daily job also queries Supabase, which stops a free project being paused for inactivity.
@@ -77,7 +77,7 @@ Do these in order. Each part takes a few minutes. You never need to send me any 
 - Free-tier limits change. Check Supabase, ImageKit and Vercel before you launch.
 - Categories: the five built-in ones plus any new category you type in a product form (it appears in the shop filters automatically).
 - **Trending page** shows every product that has the **Trending** switch on (Admin → Products). Switch it off and the product leaves the page. If none are switched on, the page says nothing is trending yet.
-- **My Orders tab** keeps the order number and last 4 phone digits in the browser's local storage, so the customer sees live status on that device. Rejected, expired or deleted orders are removed from the list automatically. Clearing browser data empties the list (the customer can find the order again with the form).
+- **Track My Order tab** is a plain lookup form (order number + last 4 phone digits). Nothing about orders is stored in the customer's browser.
 
 ## If something goes wrong
 

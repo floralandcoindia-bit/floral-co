@@ -14,7 +14,7 @@ import Shop from "./pages/Shop";
 import Trending from "./pages/Trending";
 import Collections from "./pages/Collections";
 import Cart from "./pages/Cart";
-import About from "./pages/About";
+// About page is kept in src/pages/About.jsx but hidden: to show it again, import it and restore the route + menu/footer links.
 import NotFound from "./pages/NotFound";
 import MyOrder from "./pages/MyOrder";
 
@@ -55,7 +55,6 @@ export default function App() {
         <Route path="/collections" element={page(<Collections />)} />
         <Route path="/cart" element={page(<Cart />)} />
         <Route path="/my-order" element={page(<MyOrder />)} />
-        <Route path="/about" element={page(<About />)} />
         <Route path="*" element={page(<NotFound />)} />
       </Routes>
     </>
