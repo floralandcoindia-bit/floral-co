@@ -19,8 +19,7 @@ export default function ProductQuickView({ product, onClose }) {
   const closeRef = useRef(null);
   const [activeImage, setActiveImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [values, setValues] = useState({});
-  const [errors, setErrors] = useState({});
+  const [note, setNote] = useState("");
   const soldOut = !product.isAvailable;
 
   useScrollLock(true);
@@ -56,25 +55,9 @@ export default function ProductQuickView({ product, onClose }) {
     };
   }, [onClose]);
 
-  const setValue = (id, v) => {
-    setValues((prev) => ({ ...prev, [id]: v }));
-    if (errors[id]) setErrors((prev) => ({ ...prev, [id]: undefined }));
-  };
-
   const handleAdd = () => {
-    const nextErrors = {};
-    const customisations = {};
-    product.customisationOptions.forEach((o) => {
-      const v = (values[o.id] || "").trim();
-      if (o.required && !v) nextErrors[o.id] = `Please ${o.type === "select" ? "choose" : "enter"} ${o.label.toLowerCase()}.`;
-      if (v) customisations[o.label] = v;
-    });
-    setErrors(nextErrors);
-    if (Object.keys(nextErrors).length) {
-      toast.error("Please complete the required options.");
-      return;
-    }
-    addItem(product, { quantity, customisations });
+    const text = note.trim();
+    addItem(product, { quantity, customisations: text ? { Note: text } : {} });
     toast.success(`${product.name} added to your cart.`);
     onClose();
   };
@@ -159,53 +142,21 @@ export default function ProductQuickView({ product, onClose }) {
 
           <p className="max-w-prose text-mist">{product.description}</p>
 
-          {product.customisationOptions.length > 0 && (
-            <fieldset className="space-y-4" disabled={soldOut}>
-              <legend className="mb-1 font-serif text-xl text-ivory">Make it yours</legend>
-              {product.customisationOptions.map((o) => {
-                const id = `qv-${product.id}-${o.id}`;
-                const errId = `${id}-error`;
-                return (
-                  <div key={o.id}>
-                    <label htmlFor={id} className="mb-1.5 block text-sm text-ivory">
-                      {o.label}
-                      <span className="text-mist"> {o.required ? "(required)" : "(optional)"}</span>
-                    </label>
-                    {o.type === "select" ? (
-                      <select
-                        id={id}
-                        className="field"
-                        value={values[o.id] || ""}
-                        onChange={(e) => setValue(o.id, e.target.value)}
-                        aria-invalid={Boolean(errors[o.id])}
-                        aria-describedby={errors[o.id] ? errId : undefined}
-                      >
-                        <option value="">Choose…</option>
-                        {o.choices.map((c) => (
-                          <option key={c} value={c}>{c}</option>
-                        ))}
-                      </select>
-                    ) : (
-                      <input
-                        id={id}
-                        type="text"
-                        className="field"
-                        value={values[o.id] || ""}
-                        maxLength={o.maxLength}
-                        placeholder={o.placeholder}
-                        onChange={(e) => setValue(o.id, e.target.value)}
-                        aria-invalid={Boolean(errors[o.id])}
-                        aria-describedby={errors[o.id] ? errId : undefined}
-                      />
-                    )}
-                    {errors[o.id] && (
-                      <p id={errId} role="alert" className="mt-1.5 text-sm text-gold">{errors[o.id]}</p>
-                    )}
-                  </div>
-                );
-              })}
-            </fieldset>
-          )}
+          <div>
+            <label htmlFor={`qv-${product.id}-note`} className="mb-1.5 block text-sm text-ivory">
+              Note for customisation <span className="text-mist">(optional)</span>
+            </label>
+            <textarea
+              id={`qv-${product.id}-note`}
+              rows={3}
+              maxLength={300}
+              disabled={soldOut}
+              className="field resize-y"
+              placeholder="Name, colour, message, anything you'd like changed…"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+            />
+          </div>
 
           <div className="mt-auto space-y-4 pt-2">
             <div className="flex flex-wrap items-center gap-4">

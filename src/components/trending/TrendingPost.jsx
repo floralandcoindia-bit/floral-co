@@ -13,15 +13,9 @@ export default function TrendingPost({ product }) {
   const { getCategoryLabel } = useCatalog();
   const { openQuickView } = useQuickView();
   const soldOut = !product.isAvailable;
-  const needsChoices = product.customisationOptions?.some((o) => o.required);
 
   const onAdd = () => {
     if (soldOut) return;
-    // Products with required options (name, date…) open the quick view so nothing is missed
-    if (needsChoices) {
-      openQuickView(product);
-      return;
-    }
     addItem(product, { quantity: 1 });
     toast.success(`${product.name} added to your cart.`);
   };
@@ -45,7 +39,7 @@ export default function TrendingPost({ product }) {
           className="inline-flex h-11 items-center gap-2 rounded-full bg-ivory px-5 text-sm font-medium text-forest transition-colors hover:bg-white disabled:opacity-50"
         >
           <ShoppingBag className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
-          {soldOut ? "Sold out" : needsChoices ? "Choose options" : "Add to cart"}
+          {soldOut ? "Sold out" : "Add to cart"}
         </button>
       </div>
 

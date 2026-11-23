@@ -14,22 +14,11 @@ function makeOrderNumber() {
   return `FC-${yy}${mm}-${String(randomInt(0, 10000)).padStart(4, "0")}`;
 }
 
-/** Checks the customer's choices against the product's own options and returns clean {label: value} or an error. */
-function cleanCustomisations(product, given) {
-  const out = {};
+/** Every product takes one optional free-text note for customisation. Returns clean {Note} or {}. */
+function cleanCustomisations(_product, given) {
   const input = given && typeof given === "object" ? given : {};
-  for (const opt of product.customisation_options || []) {
-    const value = str(input[opt.label], opt.type === "text" ? opt.maxLength || 60 : 120);
-    if (!value) {
-      if (opt.required) return { error: `"${product.name}": please fill in ${opt.label}.` };
-      continue;
-    }
-    if (opt.type === "select" && !(opt.choices || []).includes(value)) {
-      return { error: `"${product.name}": "${value}" is not a valid ${opt.label}.` };
-    }
-    out[opt.label] = value;
-  }
-  return { value: out };
+  const note = str(input.Note, 300);
+  return { value: note ? { Note: note } : {} };
 }
 
 export default async function handler(req, res) {

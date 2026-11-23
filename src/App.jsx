@@ -6,6 +6,7 @@ import SmoothScroll from "./components/common/SmoothScroll";
 import ScrollToHash from "./components/common/ScrollToHash";
 import RouteAnnouncer from "./components/common/RouteAnnouncer";
 import Loader from "./components/common/Loader";
+import WhatsAppLinks from "./components/common/WhatsAppLinks";
 import { scrollToTop } from "./utils/scroll";
 
 import Home from "./pages/Home";
@@ -41,6 +42,7 @@ export default function App() {
   return (
     <>
       <Loader />
+      <WhatsAppLinks />
       <SmoothScroll />
       <ScrollToHash />
       <RouteAnnouncer />

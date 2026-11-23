@@ -1,6 +1,5 @@
 import { motion } from "motion/react";
 import Seo from "../components/common/Seo";
-import Reveal from "../components/common/Reveal";
 import LazyImage from "../components/common/LazyImage";
 import ScrollWords from "../components/common/ScrollWords";
 import { aboutContent } from "../data/about";
@@ -23,39 +22,34 @@ export default function About() {
         </div>
       </header>
 
-      {/* Story blocks */}
-      <div className="container-page mt-24 space-y-28 sm:mt-36 sm:space-y-44">
-        {sections.map((s, i) => {
-          const flip = i % 2 === 1;
-          return (
-            <section key={s.id} id={s.id} aria-labelledby={`${s.id}-title`} className="scroll-mt-24 grid items-center gap-10 md:grid-cols-12 md:gap-16">
-              <motion.div
-                className={`overflow-hidden rounded-sm md:col-span-6 ${flip ? "md:order-2" : ""}`}
-                initial={{ opacity: 0, scale: 1.08 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 1.2, ease: EASE }}
-              >
-                <LazyImage
-                  src={makePlaceholder({ ...s.image, w: 900, h: 1100, variant: i })}
-                  alt={s.image.label}
-                  ratio={i % 2 ? "1/1" : "4/5"}
-                />
-              </motion.div>
+      {/* Story blocks: text card on the left, overlapping a large image on the right */}
+      <div className="container-page mt-24 space-y-24 sm:mt-36 sm:space-y-40">
+        {sections.map((s, i) => (
+          <section key={s.id} id={s.id} aria-labelledby={`${s.id}-title`} className="scroll-mt-24 md:grid md:grid-cols-12 md:items-center">
+            <motion.div
+              className="overflow-hidden rounded-sm md:col-span-8 md:col-start-5 md:row-start-1"
+              initial={{ opacity: 0, scale: 1.06 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 1.2, ease: EASE }}
+            >
+              <LazyImage src={makePlaceholder({ ...s.image, w: 1100, h: 900, variant: i })} alt={s.image.label} ratio="5/4" />
+            </motion.div>
 
-              <div className={`md:col-span-5 ${flip ? "md:order-1 md:col-start-1" : "md:col-start-8"}`}>
-                <Reveal>
-                  <h2 id={`${s.id}-title`} className="text-4xl sm:text-6xl">{s.title}</h2>
-                </Reveal>
-                {s.paragraphs.map((p, j) => (
-                  <Reveal key={j} delay={0.1 + j * 0.1} className="mt-6 max-w-md text-lg text-mist">
-                    <p>{p}</p>
-                  </Reveal>
-                ))}
-              </div>
-            </section>
-          );
-        })}
+            <motion.div
+              className="relative z-10 mx-4 -mt-16 rounded-sm border border-ivory/10 bg-evergreen/95 p-6 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.7)] backdrop-blur-sm sm:mx-8 sm:p-8 md:col-span-6 md:col-start-1 md:row-start-1 md:mx-0 md:mt-0 md:p-10"
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.25 }}
+              transition={{ duration: 0.9, delay: 0.15, ease: EASE }}
+            >
+              <h2 id={`${s.id}-title`} className="text-3xl sm:text-5xl">{s.title}</h2>
+              {s.paragraphs.map((p, j) => (
+                <p key={j} className="mt-4 max-w-md text-base text-mist sm:text-lg">{p}</p>
+              ))}
+            </motion.div>
+          </section>
+        ))}
       </div>
     </div>
   );

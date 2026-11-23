@@ -4,7 +4,8 @@ import { Check, Download, Loader2, MessageCircle } from "lucide-react";
 import Button from "../common/Button";
 import { buildOrderMessage } from "../../utils/whatsappOrder";
 import { buildOrderImage, downloadBlob, orderSignature } from "../../utils/orderImage";
-import { attachPicture, createOrder, pictureLink, rememberOrder, trackUrl, uploadOrderPicture } from "../../lib/orders";
+import { attachPicture, createOrder, pictureLink, trackUrl, uploadOrderPicture } from "../../lib/orders";
+import { openWhatsApp } from "../../utils/whatsapp";
 import { useCart } from "../../hooks/useCart";
 import { siteConfig } from "../../config/site";
 
@@ -85,18 +86,8 @@ export default function OrderForm({ items, subtotal }) {
     return !first;
   };
 
-  // Opens the studio's WhatsApp chat with the message typed in. Returns false if the browser blocked it.
-  // (No "noopener" feature string: it makes window.open always return null, so a real open couldn't be told from a block.)
-  const openChat = (message) => {
-    const w = window.open(siteConfig.whatsappLink(message), "_blank");
-    if (!w) return false;
-    try {
-      w.opener = null;
-    } catch {
-      /* cross-origin: fine */
-    }
-    return true;
-  };
+  // Opens the WhatsApp app on phones (WhatsApp Web on computers) with the message typed in.
+  const openChat = (message) => openWhatsApp(message);
 
   const handleOrder = async () => {
     if (busyRef.current) return; // already working: ignore repeat taps
@@ -116,7 +107,6 @@ export default function OrderForm({ items, subtotal }) {
         setFailure({ message: err.userFacing ? err.message : "We couldn't reach our order system right now." });
         return;
       }
-      rememberOrder(data.orderNumber, customer.phone);
 
       // 2. Draw the final order picture (with the order number) from the server's prices.
       const finalItems = data.items.map((s, i) => ({
@@ -201,7 +191,7 @@ export default function OrderForm({ items, subtotal }) {
       <ol className="mt-5 max-w-2xl list-decimal space-y-1 pl-5 text-mist">
         <li>Add your delivery details below.</li>
         <li>Tap Place Order via WhatsApp. We create your order and an order number, and our chat opens with your message and order picture link already typed.</li>
-        <li>Press send in WhatsApp. We reply to confirm availability and final pricing, and you can follow your order on My Order.</li>
+        <li>Press send in WhatsApp. We reply to confirm availability and final pricing, and you can follow your order on Track My Order.</li>
       </ol>
 
       <div className="mt-10 grid gap-10 lg:grid-cols-2">
@@ -283,7 +273,7 @@ export default function OrderForm({ items, subtotal }) {
                 {placed.hasPictureLink
                   ? "Your order picture is attached to the message as a link."
                   : "We couldn't attach the order picture, but every detail is in the message itself."}{" "}
-                We'll approve your order within 24 hours. After that you can follow it on My Order with the order number and the last 4 digits of your phone.
+                We'll approve your order within 24 hours. After that you can follow it on Track My Order with the order number and the last 4 digits of your phone.
               </p>
               <p className="mt-3 text-mist">Keep your order number: <span className="font-medium text-ivory">{placed.orderNumber}</span></p>
               <div className="mt-4 flex flex-wrap gap-3">

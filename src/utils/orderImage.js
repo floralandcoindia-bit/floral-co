@@ -12,7 +12,6 @@ const W = 1080; // logical width in px; the bitmap is rendered at up to 2x for s
 const PAD = 64;
 const INK = "#101A16";
 const EVERGREEN = "#1B2B23";
-const BOTANICAL = "#496B52";
 const SAGE = "#82977A";
 const MIST = "#B5BDAF";
 const GOLD = "#B5A477";
@@ -140,39 +139,10 @@ function wrapText(ctx, text, maxWidth) {
   return out.length ? out : [""];
 }
 
-function drawSprig(ctx, x, y, s) {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.scale(s, s);
-  ctx.strokeStyle = "rgba(130,151,122,0.5)";
-  ctx.fillStyle = "rgba(73,107,82,0.4)";
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(0, 0);
-  ctx.quadraticCurveTo(-22, -90, 30, -190);
-  ctx.stroke();
-  [
-    [-8, -38, -0.9],
-    [2, -68, 0.75],
-    [-4, -104, -0.8],
-    [16, -134, 0.7],
-    [26, -166, -0.65],
-  ].forEach(([lx, ly, a]) => {
-    ctx.save();
-    ctx.translate(lx, ly);
-    ctx.rotate(a);
-    ctx.beginPath();
-    ctx.ellipse(20, 0, 24, 8.5, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-    ctx.restore();
-  });
-  ctx.restore();
-}
-
 /**
  * One layout routine used twice: first with draw=false to measure the height, then with draw=true.
- * Returns the y position where the content ends.
+ * Returns the y position where the content ends. Layout: NEW ORDER label, brand, customer lines,
+ * rule, item rows (thumbnail, name, qty x price, line total), rule, subtotal, footer line.
  */
 function paint(ctx, d, draw) {
   const T = (str, x, y, font, color, align = "left") => {
@@ -186,111 +156,84 @@ function paint(ctx, d, draw) {
     ctx.font = font;
     return wrapText(ctx, str, maxW);
   };
-  const rule = (y, color = "rgba(243,237,224,0.14)", width = 2) => {
+  const rule = (y) => {
     if (!draw) return;
-    ctx.strokeStyle = color;
-    ctx.lineWidth = width;
+    ctx.strokeStyle = "rgba(243,237,224,0.16)";
+    ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(PAD, y);
     ctx.lineTo(W - PAD, y);
     ctx.stroke();
   };
 
-  // ---- Header / branding
-  let y = 104;
-  T(`${d.orderNumber ? `ORDER ${d.orderNumber}` : "ORDER SUMMARY"}  ·  ${d.date}`, PAD, y, `600 22px ${SANS}`, GOLD);
-  y += 88;
+  // ---- Header
+  let y = 92;
+  T(d.orderNumber ? `NEW ORDER  ·  ${d.orderNumber}` : "NEW ORDER", PAD, y, `600 22px ${SANS}`, GOLD);
+  y += 78;
   T(siteConfig.brandName, PAD, y, `500 84px ${SERIF}`, IVORY);
-  y += 48;
-  T(siteConfig.tagline, PAD, y, `italic 400 30px ${SERIF}`, SAGE);
-  y += 46;
-  rule(y, "rgba(181,164,119,0.55)", 2);
-  y += 58;
+  y += 55;
 
   // ---- Customer details
-  const labelW = 200;
-  const valueW = W - PAD * 2 - labelW;
+  const detailFont = `400 27px ${SANS}`;
   [
-    ["NAME", d.name],
-    ["PHONE", d.phone],
-    ["DELIVER TO", d.address],
+    ["Name", d.name],
+    ["Phone", d.phone],
+    ["Address", d.address],
   ].forEach(([label, value]) => {
     if (!value) return;
-    const ls = wrap(value, `400 30px ${SANS}`, valueW);
-    T(label, PAD, y, `600 20px ${SANS}`, SAGE);
-    ls.forEach((l, i) => T(l, PAD + labelW, y + i * 42, `400 30px ${SANS}`, IVORY));
-    y += (ls.length - 1) * 42 + 56;
+    wrap(`${label}: ${value}`, detailFont, W - PAD * 2).forEach((line) => {
+      T(line, PAD, y, detailFont, MIST);
+      y += 44;
+    });
   });
-  y -= 8;
+  y += -44 + 37;
   rule(y);
-  y += 62;
+  y += 26;
 
   // ---- Items
-  T("YOUR ORDER", PAD, y, `600 20px ${SANS}`, SAGE);
-  y += 36;
+  const THUMB = 150;
+  const textX = PAD + THUMB + 33;
+  const PRICE_W = 190;
+  const textW = W - PAD - textX - PRICE_W;
 
-  const THUMB_W = 150;
-  const THUMB_H = 188;
-  const textX = PAD + THUMB_W + 34;
-  const PRICE_W = 200;
-  const textW = W - PAD - textX - PRICE_W - 12;
-
-  d.items.forEach((item, i) => {
+  d.items.forEach((item) => {
     const top = y;
     const nameLines = wrap(item.name, `500 38px ${SERIF}`, textW);
-    const metaBase = top + 32 + (nameLines.length - 1) * 44 + 46;
-    const custLines = item.custom.flatMap((c) => wrap(c, `400 25px ${SANS}`, textW));
-    const lastBase = custLines.length ? metaBase + 18 + custLines.length * 34 - 4 : metaBase;
-    const bottom = Math.max(top + THUMB_H, lastBase + 12);
+    const qtyBase = top + 45 + (nameLines.length - 1) * 44 + 43;
+    const noteLines = item.custom.flatMap((c) => wrap(c, `400 24px ${SANS}`, textW));
+    const lastBase = noteLines.length ? qtyBase + 14 + noteLines.length * 32 : qtyBase;
+    const bottom = Math.max(top + THUMB, lastBase + 8);
 
     if (draw) {
-      drawCover(ctx, d.images[i], PAD, top, THUMB_W, THUMB_H, 14);
-      nameLines.forEach((l, n) => T(l, textX, top + 32 + n * 44, `500 38px ${SERIF}`, IVORY));
-      T(`Qty ${item.quantity} × ${item.unit}`, textX, metaBase, `400 26px ${SANS}`, MIST);
-      custLines.forEach((l, n) => T(l, textX, metaBase + 18 + 30 + n * 34 - 4, `400 25px ${SANS}`, SAGE));
-      T(item.total, W - PAD, top + 32, `600 34px ${SANS}`, IVORY, "right");
+      drawCover(ctx, item.image, PAD, top, THUMB, THUMB, 14);
+      nameLines.forEach((l, n) => T(l, textX, top + 45 + n * 44, `500 38px ${SERIF}`, IVORY));
+      T(`Qty ${item.quantity} × ${item.unit}`, textX, qtyBase, `400 26px ${SANS}`, MIST);
+      noteLines.forEach((l, n) => T(l, textX, qtyBase + 14 + 24 + n * 32, `400 24px ${SANS}`, SAGE));
+      T(item.total, W - PAD, top + 45, `600 34px ${SANS}`, IVORY, "right");
     }
-    y = bottom + 24;
-    if (i < d.items.length - 1) {
-      rule(y, "rgba(243,237,224,0.08)", 1.5);
-      y += 28;
-    }
+    y = bottom + 40;
   });
 
-  // ---- Totals
-  y += 6;
-  rule(y, "rgba(181,164,119,0.55)", 2);
-  y += 66;
-  T("Subtotal", PAD, y, `400 30px ${SANS}`, MIST);
-  T(d.subtotal, W - PAD, y + 6, `500 58px ${SERIF}`, GOLD, "right");
-  y += 62;
-  T("Shipping", PAD, y, `400 30px ${SANS}`, MIST);
-  T("To be confirmed", W - PAD, y, `600 30px ${SANS}`, IVORY, "right");
-  y += 24;
-
-  // ---- Notes
+  // ---- Order notes (only when the customer wrote some)
   if (d.notes) {
-    y += 28;
-    rule(y);
-    y += 56;
-    T("NOTES", PAD, y, `600 20px ${SANS}`, SAGE);
-    const ls = wrap(d.notes, `400 28px ${SANS}`, W - PAD * 2);
-    ls.forEach((l, n) => T(l, PAD, y + 44 + n * 40, `400 28px ${SANS}`, IVORY));
-    y += 44 + (ls.length - 1) * 40;
+    y -= 12;
+    T("Note", PAD, y + 4, `600 22px ${SANS}`, SAGE);
+    const ls = wrap(d.notes, `400 26px ${SANS}`, W - PAD * 2);
+    ls.forEach((l, n) => T(l, PAD, y + 46 + n * 38, `400 26px ${SANS}`, MIST));
+    y += 46 + (ls.length - 1) * 38 + 44;
   }
 
-  // ---- Footer
-  y += 44;
+  // ---- Total
+  y += 15;
   rule(y);
-  y += 54;
-  const foot = wrap(
-    `Not confirmed until ${siteConfig.brandName} approves it. Payment happens after confirmation.${d.orderNumber ? " Track it any time on My Order." : ""}`,
-    `400 22px ${SANS}`,
-    W - PAD * 2
-  );
-  foot.forEach((l, n) => T(l, W / 2, y + n * 32, `400 22px ${SANS}`, "rgba(181,189,175,0.7)", "center"));
-  y += (foot.length - 1) * 32;
-  return y + 64;
+  T("Subtotal (shipping to be confirmed)", PAD, y + 62, `400 28px ${SANS}`, MIST);
+  T(d.subtotal, W - PAD, y + 118, `500 62px ${SERIF}`, GOLD, "right");
+  y += 118;
+
+  // ---- Footer
+  y += 72;
+  T("Not confirmed until we reply on WhatsApp", W / 2, y, `400 22px ${SANS}`, "rgba(181,189,175,0.7)", "center");
+  return y + 34;
 }
 
 function renderBlob(d) {
@@ -307,20 +250,15 @@ function renderBlob(d) {
   ctx.scale(scale, scale);
   ctx.textBaseline = "alphabetic";
 
-  // background
+  // background: deep green fading to near-black
   ctx.fillStyle = INK;
   ctx.fillRect(0, 0, W, H);
   const g = ctx.createLinearGradient(0, 0, W, H);
-  g.addColorStop(0, "rgba(73,107,82,0.32)");
-  g.addColorStop(0.55, "rgba(27,43,35,0.15)");
+  g.addColorStop(0, "rgba(40,62,50,0.55)");
+  g.addColorStop(0.6, "rgba(20,32,26,0.2)");
   g.addColorStop(1, "rgba(16,26,22,0)");
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, W, H);
-  drawSprig(ctx, W - 120, 236, 1);
-  ctx.strokeStyle = "rgba(181,164,119,0.28)";
-  ctx.lineWidth = 2;
-  roundRectPath(ctx, 20, 20, W - 40, H - 40, 18);
-  ctx.stroke();
 
   paint(ctx, d, true);
 
@@ -347,21 +285,21 @@ export async function buildOrderImage({ items = [], customer = {}, notes = "", s
     address: clean(customer.address),
     notes: clean(notes),
     subtotal: formatPrice(subtotal),
-    items: items.map((i) => ({
+    items: items.map((i, n) => ({
+      image: images[n],
       name: clean(i.product?.name),
       quantity: i.quantity,
       unit: formatPrice(i.unitPrice),
       total: formatPrice(i.lineTotal),
-      custom: Object.entries(i.customisations || {}).map(([k, v]) => `${clean(k)}: ${clean(v)}`),
+      custom: Object.values(i.customisations || {}).map((v) => `Note: ${clean(v)}`),
     })),
-    images,
   };
 
   try {
     return await renderBlob(data);
   } catch {
     // If an image made the canvas unreadable, still deliver the receipt without thumbnails
-    return renderBlob({ ...data, images: data.images.map(() => null) });
+    return renderBlob({ ...data, items: data.items.map((i) => ({ ...i, image: null })) });
   }
 }
 
