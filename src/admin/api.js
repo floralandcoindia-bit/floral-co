@@ -59,7 +59,15 @@ export async function uploadImage(file, folder = "products") {
   form.append("token", auth.token);
   form.append("folder", auth.folder);
   const res = await fetch(auth.uploadUrl, { method: "POST", body: form });
-  if (!res.ok) throw new Error(`Upload failed (${res.status}). Check your ImageKit keys.`);
+  if (!res.ok) {
+    let detail = "";
+    try {
+      detail = (await res.json()).message || "";
+    } catch {
+      /* not JSON */
+    }
+    throw new Error(`Upload failed (${res.status}). ${detail || "Check your ImageKit keys."}`);
+  }
   const data = await res.json();
   if (!data?.url) throw new Error("Upload failed: no URL returned.");
   return data.url;

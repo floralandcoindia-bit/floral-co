@@ -4,7 +4,7 @@ import { Check, Download, Loader2, MessageCircle } from "lucide-react";
 import Button from "../common/Button";
 import { buildOrderMessage } from "../../utils/whatsappOrder";
 import { buildOrderImage, downloadBlob, orderSignature } from "../../utils/orderImage";
-import { attachPicture, createOrder, rememberOrder, trackUrl, uploadOrderPicture } from "../../lib/orders";
+import { attachPicture, createOrder, pictureLink, rememberOrder, trackUrl, uploadOrderPicture } from "../../lib/orders";
 import { useCart } from "../../hooks/useCart";
 import { siteConfig } from "../../config/site";
 
@@ -156,7 +156,7 @@ export default function OrderForm({ items, subtotal }) {
         notes,
         subtotal: data.subtotal,
         orderNumber: data.orderNumber,
-        imageUrl,
+        imageUrl: pictureLink(imageUrl, data.upload?.urlEndpoint),
         trackUrl: link,
       });
       setStep("Opening WhatsApp…");

@@ -81,6 +81,13 @@ export async function trackOrder(orderNumber, phone) {
   }
 }
 
+/** Link to a small page with preview tags so WhatsApp shows the picture. `endpoint` is the ImageKit URL endpoint. */
+export function pictureLink(imageUrl, endpoint) {
+  const base = String(endpoint || "").replace(/\/+$/, "");
+  if (!imageUrl || !base || !imageUrl.startsWith(`${base}/`)) return imageUrl;
+  return `${window.location.origin}/api/order-picture?p=${encodeURIComponent(imageUrl.slice(base.length + 1)).replace(/%2F/g, "/")}`;
+}
+
 export const trackUrl = (orderNumber) => `${window.location.origin}/my-order?no=${encodeURIComponent(orderNumber)}`;
 
 // Remember order numbers (only the number, never personal details) so My Order can prefill it.
