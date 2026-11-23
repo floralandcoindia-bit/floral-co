@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "motion/react";
-import { Home, LayoutGrid, ShoppingBag, Store, TrendingUp } from "lucide-react";
+import { Home, LayoutGrid, Package, ShoppingBag, Store, TrendingUp } from "lucide-react";
 import Logo from "./Logo";
 import HamburgerButton from "./HamburgerButton";
 import HamburgerMenu from "./HamburgerMenu";
@@ -9,7 +9,7 @@ import { useCart } from "../../hooks/useCart";
 import { siteConfig } from "../../config/site";
 import { useLoaded } from "../../utils/loader";
 
-const ICONS = { home: Home, shop: Store, trending: TrendingUp, collections: LayoutGrid, cart: ShoppingBag };
+const ICONS = { home: Home, shop: Store, trending: TrendingUp, collections: LayoutGrid, orders: Package, cart: ShoppingBag };
 
 function CartCount({ count }) {
   return (

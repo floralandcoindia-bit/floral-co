@@ -2,6 +2,7 @@ import Seo from "../components/common/Seo";
 import Hero from "../components/home/Hero";
 import BestSellers from "../components/home/BestSellers";
 import HowItWorks from "../components/home/HowItWorks";
+import StudioInfo from "../components/home/StudioInfo";
 import Reviews from "../components/home/Reviews";
 import Footer from "../components/common/Footer";
 
@@ -13,6 +14,7 @@ export default function Home() {
         <Hero />
         <BestSellers />
         <HowItWorks />
+        <StudioInfo />
         <Reviews />
       </div>
       <Footer />

@@ -40,7 +40,7 @@ If something fails, send me the exact error text and file name.
 |---|---|
 | Brand name, tagline, Instagram URL and handle, email, phone, shipping and order notes, menu links, smooth scroll on/off | `src/config/site.js` |
 | Products and collections | the **/admin** panel (`src/data/*.js` is only the offline sample/seed data) |
-| Trending posts | `src/data/trending.js` |
+| Trending page | Admin → Products → switch on "Trending" for a product |
 | Customer reviews (empty until you add real ones) | `src/data/testimonials.js` |
 | About page copy and FAQs (**sample copy**) | `src/data/about.js` |
 | Colours and fonts | `src/styles/variables.css` and `tailwind.config.js` |
@@ -62,7 +62,6 @@ Everything below currently uses a generated, clearly labelled placeholder or is 
 | Hero video | `public/assets/videos/hero.mp4` | Muted loop, 1920x1080, H.264, ideally under 6 MB. Without it the hero shows a dark botanical fallback. |
 | Hero poster image | `public/assets/images/hero-poster.jpg` | Shown while the video loads. |
 | Product photos | `public/assets/products/` | About 3 per product, portrait 4:5 (for example 1200x1500). Reference them in `products.js`. |
-| Trending media | `public/assets/images/` (or any path) | Images or videos for each post in `trending.js`; optional Instagram URL per post. |
 | About page images | `public/assets/images/` | The About page currently generates labelled placeholders from `about.js`. Swap the `<LazyImage src=...>` in `src/pages/About.jsx` for real photos. |
 | Real About story and FAQs | `src/data/about.js` | Current text is sample copy with no real facts. |
 | Real customer reviews | `src/data/testimonials.js` | Shape: `{ id, name, location, quote, productId? }`. The site never invents reviews. |

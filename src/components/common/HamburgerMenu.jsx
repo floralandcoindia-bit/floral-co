@@ -51,7 +51,7 @@ export default function HamburgerMenu({ open, onClose }) {
           aria-modal="true"
           aria-label="Site menu"
           data-lenis-prevent
-          className="fixed inset-0 z-40 overflow-y-auto bg-forest outline-none"
+          className="fixed inset-0 z-40 overflow-y-auto bg-gradient-to-br from-ivory/[0.14] via-forest/25 to-forest/40 backdrop-blur-xl backdrop-saturate-150 outline-none supports-[not(backdrop-filter)]:bg-forest/95"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0, transition: { duration: 0.35, delay: 0.1 } }}

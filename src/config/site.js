@@ -32,17 +32,18 @@ export const siteConfig = {
     { label: "Shop", to: "/shop", icon: "shop" },
     { label: "Trending", to: "/trending", icon: "trending" },
     { label: "Collections", to: "/collections", icon: "collections" },
+    { label: "My Orders", to: "/my-order", icon: "orders" },
     { label: "My Cart", to: "/cart", icon: "cart", isCart: true },
   ],
 
   // Full-screen menu overlay
   menuLinks: [
-    { label: "My Order", to: "/my-order" },
+    { label: "My Orders", to: "/my-order" },
     { label: "About Us", to: "/about" },
     { label: "Our Story", to: "/about#story" },
     { label: "How It Works", to: "/#how-it-works" },
     { label: "Contact Us", to: "/#contact" }, // footer lives on the home page
     { label: "WhatsApp", href: WHATSAPP_URL, external: true },
-    { label: "FAQs", to: "/about#faqs" },
+    { label: "FAQs", to: "/#faqs" },
   ],
 };

@@ -76,7 +76,8 @@ Do these in order. Each part takes a few minutes. You never need to send me any 
 - Order pictures contain the customer's name, phone and address. They sit behind a long random link and the checkout page tells customers so.
 - Free-tier limits change. Check Supabase, ImageKit and Vercel before you launch.
 - Categories: the five built-in ones plus any new category you type in a product form (it appears in the shop filters automatically).
-- The Trending posts page still reads from `src/data/trending.js` (it wasn't part of this change). Its "add to cart" buttons use the live products.
+- **Trending page** shows every product that has the **Trending** switch on (Admin → Products). Switch it off and the product leaves the page. If none are switched on, the page says nothing is trending yet.
+- **My Orders tab** keeps the order number and last 4 phone digits in the browser's local storage, so the customer sees live status on that device. Rejected, expired or deleted orders are removed from the list automatically. Clearing browser data empties the list (the customer can find the order again with the form).
 
 ## If something goes wrong
 

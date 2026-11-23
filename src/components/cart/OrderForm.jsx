@@ -116,7 +116,7 @@ export default function OrderForm({ items, subtotal }) {
         setFailure({ message: err.userFacing ? err.message : "We couldn't reach our order system right now." });
         return;
       }
-      rememberOrder(data.orderNumber);
+      rememberOrder(data.orderNumber, customer.phone);
 
       // 2. Draw the final order picture (with the order number) from the server's prices.
       const finalItems = data.items.map((s, i) => ({

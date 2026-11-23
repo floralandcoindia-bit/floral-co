@@ -90,16 +90,31 @@ export function pictureLink(imageUrl, endpoint) {
 
 export const trackUrl = (orderNumber) => `${window.location.origin}/my-order?no=${encodeURIComponent(orderNumber)}`;
 
-// Remember order numbers (only the number, never personal details) so My Order can prefill it.
-export function rememberOrder(orderNumber) {
+// ---- Orders saved on this device ------------------------------------------------------------------
+// We keep only the order number and the last 4 phone digits (needed to look the order up). No name, address or items.
+// They stay until the browser data is cleared, or until the order turns out to be rejected / expired / deleted.
+const MAX_SAVED = 20;
+
+function writeSaved(list) {
   try {
-    const list = getRecentOrders().filter((o) => o.no !== orderNumber);
-    list.unshift({ no: orderNumber, at: Date.now() });
-    localStorage.setItem(RECENT_KEY, JSON.stringify(list.slice(0, 5)));
+    localStorage.setItem(RECENT_KEY, JSON.stringify(list.slice(0, MAX_SAVED)));
   } catch {
     /* storage unavailable: fine */
   }
 }
+
+export function rememberOrder(orderNumber, phone = "") {
+  const last4 = String(phone).replace(/\D/g, "").slice(-4);
+  const existing = getRecentOrders().find((o) => o.no === orderNumber);
+  const list = getRecentOrders().filter((o) => o.no !== orderNumber);
+  list.unshift({ no: orderNumber, at: existing?.at || Date.now(), last4: last4.length === 4 ? last4 : existing?.last4 || "" });
+  writeSaved(list);
+}
+
+export function forgetOrder(orderNumber) {
+  writeSaved(getRecentOrders().filter((o) => o.no !== orderNumber));
+}
+
 export function getRecentOrders() {
   try {
     const list = JSON.parse(localStorage.getItem(RECENT_KEY) || "[]");
