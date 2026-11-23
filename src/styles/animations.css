@@ -1,0 +1,36 @@
+@keyframes shimmer {
+  0% { background-position: 150% 0; }
+  100% { background-position: -50% 0; }
+}
+
+/* Soft loading state behind lazy images (prevents a flat black flash) */
+.img-skeleton {
+  background-image: linear-gradient(
+    100deg,
+    rgb(var(--color-surface-rgb)) 30%,
+    rgb(var(--color-primary-rgb) / 0.35) 50%,
+    rgb(var(--color-surface-rgb)) 70%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s linear infinite;
+}
+
+/* Reviews marquee: moves left → right, endless. The track holds the list twice, so -50% → 0 loops seamlessly. */
+@keyframes marquee-ltr {
+  from { transform: translate3d(-50%, 0, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+.marquee-track {
+  animation: marquee-ltr 60s linear infinite;
+  will-change: transform;
+}
+.marquee-mask:hover .marquee-track,
+.marquee-mask:focus-within .marquee-track { animation-play-state: paused; }
+.marquee-mask {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none !important; }
+  .marquee-mask { overflow-x: auto; }
+}

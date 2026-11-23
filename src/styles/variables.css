@@ -1,0 +1,27 @@
+:root {
+  /* Brand palette */
+  --color-bg: #101a16; /* Deep Forest Black */
+  --color-surface: #1b2b23; /* Dark Evergreen */
+  --color-primary: #496b52; /* Botanical Green */
+  --color-sage: #82977a; /* Muted Sage */
+  --color-gold: #b5a477; /* Antique Gold (sparingly) */
+  --color-ivory: #f3ede0; /* Warm Ivory */
+  --color-muted: #b5bdaf; /* Soft Sage Grey */
+
+  /* RGB channels so Tailwind opacity modifiers (e.g. bg-ivory/10) work */
+  --color-bg-rgb: 16 26 22;
+  --color-surface-rgb: 27 43 35;
+  --color-primary-rgb: 73 107 82;
+  --color-sage-rgb: 130 151 122;
+  --color-gold-rgb: 181 164 119;
+  --color-ivory-rgb: 243 237 224;
+  --color-muted-rgb: 181 189 175;
+
+  --color-border: rgb(243 237 224 / 0.12);
+
+  --font-serif: "Cormorant Garamond", "Fraunces", Georgia, "Times New Roman", serif;
+  --font-sans: "Hanken Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  color-scheme: dark;
+}
